@@ -1,30 +1,22 @@
 import 'dart:convert';
 
-import 'package:chwialka_schedule/model/EventModel.dart';
+import 'package:chwialka_schedule/model/ScheduleModel.dart';
 import 'package:flutter/services.dart';
 
-class IceRinkEventService {
+class IceRinkScheduleService {
   static const platform =
       const MethodChannel("com.kotlarz.chwialkaschedule.events");
 
-  Future<List<List<EventModel>>> fetchEvents() async {
+  Future<List<ScheduleModel>> fetchSchedules() async {
     final String result = await platform.invokeMethod("");
     final List<dynamic> json = jsonDecode(result);
 
-    final days = List<List<EventModel>>();
+    final schedules = List<ScheduleModel>();
 
-    json.forEach((dayEvents) {
-      final events = List<EventModel>();
-
-      final List<dynamic> list = dayEvents;
-      list.forEach((eventJson) {
-        final event = EventModel.fromMap(eventJson);
-        events.add(event);
-      });
-
-      days.add(events);
+    json.forEach((scheduleJson) {
+      schedules.add(ScheduleModel.fromMap(scheduleJson));
     });
 
-    return days;
+    return schedules;
   }
 }
