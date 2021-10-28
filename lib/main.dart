@@ -1,4 +1,4 @@
-import 'package:chwialka_schedule/page/MainPage.dart';
+import 'package:chwialka_ice_rink_schedule_mobile/page/main_page.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());

@@ -1,17 +1,19 @@
-import 'package:chwialka_schedule/model/DayModel.dart';
-import 'package:chwialka_schedule/model/EventModel.dart';
-import 'package:chwialka_schedule/model/ScheduleModel.dart';
-import 'package:chwialka_schedule/service/IceRinkEventService.dart';
+import 'package:chwialka_ice_rink_schedule_mobile/model/day_model.dart';
+import 'package:chwialka_ice_rink_schedule_mobile/model/event_model.dart';
+import 'package:chwialka_ice_rink_schedule_mobile/model/schedule_model.dart';
+import 'package:chwialka_ice_rink_schedule_mobile/service/ice_rink_event_service.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
+  const MainPage({Key? key}) : super(key: key);
+
   @override
   _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
   var loading = false;
-  final schedules = List<ScheduleModel>();
+  final schedules = <ScheduleModel>[];
 
   final scheduleService = IceRinkScheduleService();
   var pageViewController = PageController();
@@ -92,7 +94,7 @@ class _MainPageState extends State<MainPage> {
       'październik',
       'listopad',
       'grudzień'
-    ][month];
+    ][month - 1];
   }
 
   String dayOfTheWeekName(int dayOfTheWeek) {
@@ -111,10 +113,10 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Harmonogram lodowiska'),
+        title: const Text('Harmonogram lodowiska'),
       ),
       body: loading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : PageView.builder(
@@ -134,14 +136,14 @@ class _MainPageState extends State<MainPage> {
           child: Card(
             color: isToday(dayModel) ? Colors.green : null,
             child: ListTile(
-              leading: Icon(Icons.today),
+              leading: const Icon(Icons.today),
               title: Text(
                 dayOfTheWeekName(findDayOfTheWeek(dayModel)),
-                style: TextStyle(fontSize: 18),
+                style: const TextStyle(fontSize: 18),
               ),
               subtitle: Text(findDateText(dayModel)),
               trailing: isToday(dayModel)
-                  ? Text(
+                  ? const Text(
                       'Dziś',
                       style: TextStyle(fontSize: 18),
                     )
@@ -161,7 +163,7 @@ class _MainPageState extends State<MainPage> {
           final event = events[index];
           return Ink(
             color: event.name.contains('Ślizgawka')
-                ? Theme.of(context).accentColor
+                ? Theme.of(context).colorScheme.secondary
                 : Theme.of(context).backgroundColor,
             child: Padding(
               padding: const EdgeInsets.all(15.0),
