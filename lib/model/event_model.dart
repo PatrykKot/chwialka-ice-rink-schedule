@@ -8,16 +8,11 @@ class EventModel {
   EventModel(
       {required this.starting, required this.name, required this.ending});
 
-  static EventModel fromMap(Map<String, dynamic> map) {
-    return EventModel(
-        name: map['name'],
-        starting: TimeModel.fromMap(map['starting']),
-        ending: TimeModel.fromMap(map['ending']));
+  bool includesIn(TimeModel timeModel) {
+    final timeModelMinutes = timeModel.toMinutes();
+    final startingMinutes = starting.toMinutes();
+    final endingMinutes = ending.toMinutes();
+    return startingMinutes < timeModelMinutes &&
+        endingMinutes > timeModelMinutes;
   }
-
-  Map toJson() => {
-        "ending": ending,
-        "name": name,
-        "starting": starting,
-      };
 }

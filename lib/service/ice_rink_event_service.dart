@@ -6,6 +6,8 @@ import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 
+final iceRinkScheduleService = IceRinkScheduleService();
+
 class IceRinkScheduleService {
   Future<List<ScheduleModel>> fetchSchedules() async {
     final response = await http.get(
@@ -26,19 +28,29 @@ class IceRinkScheduleService {
 
     final days = List.generate(7, (index) => DayModel(events: []));
 
-    var timeMinutes = 6 * 60 + 30;
+    var checkedTimeMinutes = 6 * 60 + 30;
     for (final tr in trs) {
-      final tds = tr.getElementsByTagName("td");
-      for (final td in tds) {
-        if (td.attributes.containsKey("rowspan")) {
-          EventModel event = parseEvent(td, timeMinutes);
+      final checkedTimeModel = TimeModel.fromMinutes(checkedTimeMinutes);
 
-          var dayNumber = tds.indexOf(td) - 2; // TODO NOT WORKING, COLSPAN!
-          days[dayNumber].events.add(event);
+      var tdIterator = 2;
+      final tds = tr.getElementsByTagName("td");
+
+      for (final day in days) {
+        final dayIndex = days.indexOf(day);
+        if (!day.events.any((event) => event.includesIn(checkedTimeModel))) {
+          final td = tds[tdIterator];
+
+          if (td.attributes.containsKey("rowspan")) {
+            EventModel event = parseEvent(td, checkedTimeMinutes);
+
+            days[dayIndex].events.add(event);
+          }
+
+          tdIterator++;
         }
       }
 
-      timeMinutes += 15;
+      checkedTimeMinutes += 15;
     }
 
     return [ScheduleModel(start: getStartingDay(document), days: days)];
@@ -50,9 +62,8 @@ class IceRinkScheduleService {
     final ending = timeMinutes + minutes;
 
     final event = EventModel(
-        starting: TimeModel(
-            hour: (timeMinutes / 60).floor(), minute: timeMinutes % 60),
-        ending: TimeModel(hour: (ending / 60).floor(), minute: ending % 60),
+        starting: TimeModel.fromMinutes(timeMinutes),
+        ending: TimeModel.fromMinutes(ending),
         name: td.text.trim());
     return event;
   }

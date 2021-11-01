@@ -4,12 +4,11 @@ class TimeModel {
 
   TimeModel({required this.hour, required this.minute});
 
-  static TimeModel fromMap(Map<String, dynamic> map) {
-    return TimeModel(hour: map['hour'], minute: map['minute']);
+  int toMinutes() {
+    return hour * 60 + minute;
   }
 
-  Map toJson() => {
-    "hour": hour,
-    "minute": minute,
-  };
+  static TimeModel fromMinutes(int minutes) {
+    return TimeModel(hour: (minutes / 60).floor(), minute: minutes % 60);
+  }
 }
